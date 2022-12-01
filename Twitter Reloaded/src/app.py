@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, Response
 from pymongo import MongoClient
 from bson import json_util
 from bson.objectid import ObjectId
-import bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
@@ -32,7 +32,11 @@ def create_user():
     email = request.json['email']
     password = request.json['password']
     if username and email and password:
-        hashed_password = bcrypt.generate_password_hash(password)
+        username_exists = db.users.find_one({'username': username})
+        email_exists = db.users.find({'email': email})
+        if username_exists is not None and email_exists is not None:
+            return not_found()
+        hashed_password = generate_password_hash(password)
         id = db.users.insert_one(
             {'username': username, 'email': email, 'password': hashed_password}).inserted_id
         response = jsonify({
@@ -59,7 +63,7 @@ def update_user(_id):
     email = request.json['email']
     password = request.json['password']
     if username and email and password and _id:
-        hashed_password = bcrypt.generate_password_hash(password)
+        hashed_password = generate_password_hash(password)
         db.users.update_one(
             {'_id': ObjectId(_id['$oid'])  if '$oid' in _id else ObjectId(_id)}, 
             {'$set': {'username': username, 'email': email, 'password': hashed_password}})
@@ -88,7 +92,7 @@ def get_tweet(id):
 def create_tweet():
     user_id = request.json['user_id']
     content = request.json['content']
-    if user_id and content and len(content) < 300:   
+    if user_id and content and len(content) <= 300:   
         id = db.tweets.insert_one(
             {'user_id': user_id, 'content': content}).inserted_id
         response = jsonify({
@@ -130,7 +134,7 @@ def create_response_tweet():
     user_id = request.json['user_id']
     content = request.json['content']
     parent = request.json['parent']
-    if user_id and content and len(content) < 300:   
+    if user_id and content and len(content) <= 300:   
         id = db.restweets.insert_one(
             {'user_id': user_id, 'content': content, 'parent': parent}).inserted_id
         response = jsonify({
