@@ -18,17 +18,17 @@ export default function Sidebar({imgSrc, title, name, role, edit, children}: Pro
                 <h3 className="text-dark fw-bold start-50">{title}</h3>
             </div>
             <div className="row pt-4">
-                <div className="col-4">
+                {/* <div className="col-4">
                     {
                         imgSrc ? (<img className="img-fluid align-content-right rounded-circle " alt="User profile" src={imgSrc} style={{objectFit: "cover"}}/>)
                         : <FontAwesomeIcon color="gray" icon={faUserCircle} size={'4x'}/>
                     }
                     
-                </div>
+                </div> */}
                 <div className="col-8">
                     <h6 style={{textAlign:"left", fontWeight:"700",}}>{name}</h6>
                     <p style={{textAlign:"left", fontWeight:"200", marginTop:"-7.5px"}}>{role}</p>
-                    <button style={{textAlign:"left", fontStyle: "italic", fontWeight:"200", backgroundColor:"transparent", border:0}}>{edit}</button>
+                    {/* <button style={{textAlign:"left", fontStyle: "italic", fontWeight:"200", backgroundColor:"transparent", border:0}}>{edit}</button> */}
                 </div>
             </div>
             <div className="row pt-4">

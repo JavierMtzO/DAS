@@ -1,6 +1,5 @@
 import React from "react";
 import Tweet from "./Tweet/Tweet";
-import Post from "./Post/Post";
 
 export default function Tweets()  {
     return (
