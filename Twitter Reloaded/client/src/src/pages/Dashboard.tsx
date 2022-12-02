@@ -7,10 +7,14 @@ export default function Dashboard() {
   const [data, setData] = React.useState<any[]>([])
 
   React.useEffect(() => {
-    fetch("/tweets")
+    fetch("/newtweets")
         .then((res) => res.json())
         .then((data) => setData(data));
   }, []);
+
+  if(data) {
+    console.log(data);
+  }
 
   return (
     <Container fluid className='full-page-with-nav'>
@@ -18,8 +22,13 @@ export default function Dashboard() {
         <h2>Dashboard</h2>
       </div>
       <hr />
-      <Tweets />
-      { data ? 
+      {
+        data ?
+        <Tweets title="Latest tweets" tweets={data}/>
+        :
+        <div></div>
+      }
+      {/* { data ? 
         <div>
           {
             data.map(function(tweet,index){
@@ -29,7 +38,7 @@ export default function Dashboard() {
         </div>
         :
         <div> </div>
-      }
+      } */}
     </Container>
   );
 }

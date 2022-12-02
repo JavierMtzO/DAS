@@ -14,7 +14,6 @@ export default function Tweet({username, message, date}: Props) {
         <link href="https://fonts.googleapis.com/css?family=Asap" rel="stylesheet"/>
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"/>
         <div className="tweet-header">
-            <img src="https://pbs.twimg.com/profile_images/1012717264108318722/9lP-d2yM_400x400.jpg" alt="" className="avator"/>
             <div className="tweet-header-info">
                 {username} <span>{username}</span> <span>{date}
                 </span>

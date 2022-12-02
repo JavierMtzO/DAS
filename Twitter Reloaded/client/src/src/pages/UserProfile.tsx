@@ -39,7 +39,7 @@ export default function UserProfile() {
           </Sidebar>
         </div>
         <div className="col-12 col-lg-9 py-3 py-lg-5">  
-          <Tweets />        
+          {/* <Tweets />         */}
         </div>
       </div>
     </div>
