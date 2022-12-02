@@ -115,7 +115,7 @@ def get_tweet(id):
 
 @app.route('/newtweets', methods=['GET'])
 def get_new_tweets():
-    new_tweets = db.tweets.find().sort("timestamp", 1).limit(10)
+    new_tweets = db.tweets.find({"parent":{"$exists":False}}).sort("timestamp", -1).limit(10)
     response = json_util.dumps(new_tweets)
     return Response(response, mimetype="application/json")
 
@@ -131,7 +131,9 @@ def create_tweet():
         return unauthorized()
     if user_id and content and len(content) <= 300:   
         if parent:
-            id = db.tweets.insert_one({'user_id': user_id, 'content': content, 'parent': parent}).inserted_id
+            id = db.tweets.insert_one({
+                'user_id': user_id, 'content': content, 'parent': parent, 'timestamp': datetime.now()
+                }).inserted_id
             response = jsonify({
                 '_id': str(id),
                 'user_id': user_id,
@@ -145,7 +147,9 @@ def create_tweet():
                 "user": session['username'],
                 "timestamp": datetime.now()})
         else:
-            id = db.tweets.insert_one({'user_id': user_id, 'content': content}).inserted_id
+            id = db.tweets.insert_one({
+                'user_id': user_id, 'content': content, 'timestamp': datetime.now()
+                }).inserted_id
             response = jsonify({
                 '_id': str(id),
                 'user_id': user_id,
@@ -182,7 +186,7 @@ def add_tweet_to_user(user_id, tweet_id, content):
 
 def delete_tweet_from_user(tweet_id):
     _id = ObjectId(tweet_id)
-    db.users.update_one({}, {"$pull": {"tweets": {"tweet_id": tweet_id}}})
+    db.users.update_one({}, {"$pull": {"tweets": {"tweet_id": _id}}})
 
 def add_response_to_tweet(parent_id, tweet_id, content):
     _id = ObjectId(parent_id)
@@ -190,7 +194,7 @@ def add_response_to_tweet(parent_id, tweet_id, content):
 
 def delete_response_from_tweet(tweet_id):
     _id = ObjectId(tweet_id)
-    db.tweets.update_one({}, {"$pull": {"responses": {"response_id": tweet_id}}})
+    db.tweets.update_one({}, {"$pull": {"responses": {"response_id": _id }}})
 
 def check_user(user_id):
     if ("user_id" not in session) or (user_id != session['user_id']):
