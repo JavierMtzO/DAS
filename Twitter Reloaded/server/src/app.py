@@ -121,7 +121,8 @@ def get_new_tweets():
 
 @app.route('/tweets', methods=['POST'])
 def create_tweet():
-    user_id = request.json['user_id']
+    user_id = session['user_id']
+    username = session['username']
     content = request.json['content']
     if 'parent' in request.json:
         parent = request.json['parent']
@@ -129,10 +130,11 @@ def create_tweet():
         parent = None
     if check_user(user_id) == False:
         return unauthorized()
-    if user_id and content and len(content) <= 300:   
+    if user_id and username and content and len(content) <= 300:   
         if parent:
             id = db.tweets.insert_one({
-                'user_id': user_id, 'content': content, 'parent': parent, 'timestamp': datetime.now()
+                'user_id': user_id, 'username':username, 'content': content, 
+                'parent': parent, 'timestamp': datetime.now()
                 }).inserted_id
             response = jsonify({
                 '_id': str(id),
@@ -148,7 +150,7 @@ def create_tweet():
                 "timestamp": datetime.now()})
         else:
             id = db.tweets.insert_one({
-                'user_id': user_id, 'content': content, 'timestamp': datetime.now()
+                'user_id': user_id, 'username':username, 'content': content, 'timestamp': datetime.now()
                 }).inserted_id
             response = jsonify({
                 '_id': str(id),
