@@ -28,17 +28,6 @@ export default function Dashboard() {
         :
         <div></div>
       }
-      {/* { data ? 
-        <div>
-          {
-            data.map(function(tweet,index){
-              return <p>{tweet['content']}</p>
-            })
-          }
-        </div>
-        :
-        <div> </div>
-      } */}
     </Container>
   );
 }
