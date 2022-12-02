@@ -1,8 +1,9 @@
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request, Response, session
 from pymongo import MongoClient
 from bson import json_util
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -10,6 +11,31 @@ app.secret_key = 'key'
 mongo = MongoClient("mongodb+srv://Gustavo:kUbunriOkGpWyAkT@cluster0.r0fukzf.mongodb.net/?retryWrites=true&w=majority")
 db = mongo['Twitter_Reloaded']
 
+#Login / Logout Routes
+
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.json['email']
+    password = request.json['password']
+    if email and password:
+        user = db.users.find_one({'email': email})
+        correct_login = check_password_hash(user['password'], password)
+        if correct_login:
+            session['user_id'] = str(user['_id'])
+            session['username'] = str(user['username'])
+            response = json_util.dumps(session)
+            db.events.insert_one(
+                {"type":"open_application",
+                "user": session['username'],
+                "timestamp": datetime.now()})
+            return Response(response, mimetype="application/json")
+        return not_found()
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    session.pop("user_id", None)
+    session.pop("username", None)
+    return json_util.dumps({"Logout":"Success"})
 
 # User Routes
 
@@ -22,7 +48,6 @@ def get_users():
 @app.route('/users/<id>', methods=['GET'])
 def get_user(id):
     user = db.users.find_one({'_id': ObjectId(id)})
-    # print(user[0]._id)
     response = json_util.dumps(user)
     return Response(response, mimetype="application/json")
 
@@ -71,7 +96,7 @@ def update_user(_id):
         response.status_code = 200
         return response
     else:
-      return not_found()
+      return unauthorized()
 
 
 # Tweets Routes
@@ -92,14 +117,34 @@ def get_tweet(id):
 def create_tweet():
     user_id = request.json['user_id']
     content = request.json['content']
+    parent = request.json['parent']
+    if check_user(user_id) == False:
+        return unauthorized()
     if user_id and content and len(content) <= 300:   
-        id = db.tweets.insert_one(
-            {'user_id': user_id, 'content': content}).inserted_id
-        response = jsonify({
-            '_id': str(id),
-            'user_id': user_id,
-            'content': content
-        })
+        if parent:
+            id = db.tweets.insert_one({'user_id': user_id, 'content': content, 'parent': parent}).inserted_id
+            response = jsonify({
+                '_id': str(id),
+                'user_id': user_id,
+                'content': content,
+                'parent': parent
+            })
+            add_response_to_tweet(parent, id)
+            db.events.insert_one(
+                {"type":"reply_tweet",
+                "user": session['username'],
+                "timestamp": datetime.now()})
+        else:
+            id = db.tweets.insert_one({'user_id': user_id, 'content': content}).inserted_id
+            response = jsonify({
+                '_id': str(id),
+                'user_id': user_id,
+                'content': content
+            })
+            db.events.insert_one(
+                {"type":"create_tweet",
+                "user": session['username'],
+                "timestamp": datetime.now()})
         add_tweet_to_user(user_id, id)
         response.status_code = 201
         return response
@@ -108,51 +153,10 @@ def create_tweet():
 
 @app.route('/tweets/<id>', methods=['DELETE'])
 def delete_tweet(id):
+    tweet = db.tweets.find_one({'_id': ObjectId(id)})
+    if check_user(tweet['user_id']) == False:
+        return unauthorized()
     db.tweets.delete_one({'_id': ObjectId(id)})
-    response = jsonify({'message': 'Tweet ' + id + ' Deleted Successfully'})
-    response.status_code = 200
-    delete_tweet_from_user(id)
-    return response
-
-
-# Response Tweets Routes
-
-@app.route('/restweets', methods=['GET'])
-def get_response_tweets():
-    restweets = db.restweets.find()
-    response = json_util.dumps(restweets)
-    return Response(response, mimetype="application/json")
-
-@app.route('/restweets/<id>', methods=['GET'])
-def get_response_tweet(id):
-    user = db.restweets.find_one({'_id': ObjectId(id), })
-    response = json_util.dumps(user)
-    return Response(response, mimetype="application/json")
-
-@app.route('/restweets', methods=['POST'])
-def create_response_tweet():
-    user_id = request.json['user_id']
-    content = request.json['content']
-    parent = request.json['parent']
-    if user_id and content and len(content) <= 300:   
-        id = db.restweets.insert_one(
-            {'user_id': user_id, 'content': content, 'parent': parent}).inserted_id
-        response = jsonify({
-            '_id': str(id),
-            'user_id': user_id,
-            'content': content,
-            'parent': parent
-        })
-        add_tweet_to_user(user_id, id)
-        add_response_to_tweet(parent, id)
-        response.status_code = 201
-        return response
-    else:
-        return not_found()
-
-@app.route('/restweets/<id>', methods=['DELETE'])
-def delete_response_tweet(id):
-    db.restweets.delete_one({'_id': ObjectId(id)})
     response = jsonify({'message': 'Tweet ' + id + ' Deleted Successfully'})
     response.status_code = 200
     delete_tweet_from_user(id)
@@ -177,6 +181,23 @@ def delete_response_from_tweet(tweet_id):
     _id = ObjectId(tweet_id)
     db.tweets.update_one({}, {"$pull": {"responses": _id}})
 
+def check_user(user_id):
+    if ("user_id" not in session) or (user_id != session['user_id']):
+        return False
+    else:
+        return True
+    
+
+# Page Unauthorized
+@app.errorhandler(401)
+def unauthorized(error=None):
+    message = {
+        'message': 'Unauthorized: Cannot Access Resource ' + request.url,
+        'status': 401
+    }
+    response = jsonify(message)
+    response.status_code = 401
+    return response
 
 
 # Page Not Found
