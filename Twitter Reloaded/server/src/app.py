@@ -113,11 +113,20 @@ def get_tweet(id):
     response = json_util.dumps(user)
     return Response(response, mimetype="application/json")
 
+@app.route('/newtweets', methods=['GET'])
+def get_new_tweets():
+    new_tweets = db.tweets.find().sort("timestamp", 1).limit(10)
+    response = json_util.dumps(new_tweets)
+    return Response(response, mimetype="application/json")
+
 @app.route('/tweets', methods=['POST'])
 def create_tweet():
     user_id = request.json['user_id']
     content = request.json['content']
-    parent = request.json['parent']
+    if 'parent' in request.json:
+        parent = request.json['parent']
+    else:
+        parent = None
     if check_user(user_id) == False:
         return unauthorized()
     if user_id and content and len(content) <= 300:   
@@ -127,9 +136,10 @@ def create_tweet():
                 '_id': str(id),
                 'user_id': user_id,
                 'content': content,
-                'parent': parent
+                'parent': parent,
+                'timestamp': datetime.now()
             })
-            add_response_to_tweet(parent, id)
+            add_response_to_tweet(parent, id, content)
             db.events.insert_one(
                 {"type":"reply_tweet",
                 "user": session['username'],
@@ -139,13 +149,14 @@ def create_tweet():
             response = jsonify({
                 '_id': str(id),
                 'user_id': user_id,
-                'content': content
+                'content': content,
+                'timestamp': datetime.now()
             })
             db.events.insert_one(
                 {"type":"create_tweet",
                 "user": session['username'],
                 "timestamp": datetime.now()})
-        add_tweet_to_user(user_id, id)
+        add_tweet_to_user(user_id, id, content)
         response.status_code = 201
         return response
     else:
@@ -165,21 +176,21 @@ def delete_tweet(id):
 
 # Utils
 
-def add_tweet_to_user(user_id, tweet_id):
+def add_tweet_to_user(user_id, tweet_id, content):
     _id = ObjectId(user_id)
-    db.users.update_one({"_id":_id}, {"$addToSet": {"tweets": tweet_id}})
+    db.users.update_one({"_id":_id}, {"$addToSet": {"tweets": {"tweet_id": tweet_id, "content": content}}})
 
 def delete_tweet_from_user(tweet_id):
     _id = ObjectId(tweet_id)
-    db.users.update_one({}, {"$pull": {"tweets": _id}})
+    db.users.update_one({}, {"$pull": {"tweets": {"tweet_id": tweet_id}}})
 
-def add_response_to_tweet(parent_id, tweet_id):
+def add_response_to_tweet(parent_id, tweet_id, content):
     _id = ObjectId(parent_id)
-    db.tweets.update_one({"_id":_id}, {"$addToSet": {"responses": tweet_id}})
+    db.tweets.update_one({"_id":_id}, {"$addToSet": {"responses": {"response_id": tweet_id, "content": content}}})
 
 def delete_response_from_tweet(tweet_id):
     _id = ObjectId(tweet_id)
-    db.tweets.update_one({}, {"$pull": {"responses": _id}})
+    db.tweets.update_one({}, {"$pull": {"responses": {"response_id": tweet_id}}})
 
 def check_user(user_id):
     if ("user_id" not in session) or (user_id != session['user_id']):
@@ -212,4 +223,4 @@ def not_found(error=None):
     return response
 
 if __name__ == "__main__":
-    app.run(debug=True, port=3000)
+    app.run(debug=True, port=3001)
