@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
+import Tweets from "../components/Tweets";
 
 export default function Dashboard() {
 
@@ -9,6 +10,7 @@ export default function Dashboard() {
         <h2>Dashboard</h2>
       </div>
       <hr />
+      <Tweets />  
     </Container>
   );
 }

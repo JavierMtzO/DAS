@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import Flush from "../components/Flush";
 // import Button from "../components/Button";
 // import { deleteToken } from "../services/tokenUtilities";
+import Tweets from "../components/Tweets";
 import { useNavigate } from "react-router-dom";
 
 export default function UserProfile() {
@@ -37,7 +38,8 @@ export default function UserProfile() {
               </div>
           </Sidebar>
         </div>
-        <div className="col-12 col-lg-9 py-3 py-lg-5">          
+        <div className="col-12 col-lg-9 py-3 py-lg-5">  
+          <Tweets />        
         </div>
       </div>
     </div>
