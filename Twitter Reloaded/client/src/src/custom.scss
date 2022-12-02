@@ -1,0 +1,42 @@
+// Override default variables before the import
+$primary: 	#1100ff;
+$secondary: #f2f2ff;
+$warning: #c4c4c4;
+$info: #e5e5e5;
+$light: #ffffff;
+$dark: #000000;
+$danger: #D22B2B;
+$success: #008000;
+$hint: #979EA5;
+
+// Override theme colors
+$theme-colors: (
+  "primary":    $primary,
+  "secondary":  $secondary,
+  "warning":    $warning,
+  "info":       $info,
+  "success":    $success,
+  "danger":     $danger,
+  "light":      $light,
+  "dark":       $dark,
+  "hint":       $hint
+);
+
+$accordion-bg:  transparent;
+$input-height-lg: 75px;
+$input-font-size-lg: 22px;
+
+a:hover {
+  color: $primary !important;
+}
+
+.req {
+  color: #A92323 !important;
+}
+
+.small {
+  font-size: 14px !important;
+}
+
+// Import Bootstrap and its default variables
+@import '~bootstrap/scss/bootstrap.scss';
