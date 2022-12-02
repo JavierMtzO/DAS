@@ -16,7 +16,12 @@ export default function Tweets({title, tweets}: Props)  {
                 <div>
                 {
                     tweets.map(function(tweet){
-                    return <Tweet username={tweet['user_id']} message={tweet['content']} date={tweet['timestamp']['$date']}/>   
+                        return <Tweet 
+                        username={tweet['username']} 
+                        message={tweet['content']} 
+                        date={tweet['timestamp']['$date']}
+                        responses={tweet['responses']}
+                        />
                     })
                 }
                 </div>
