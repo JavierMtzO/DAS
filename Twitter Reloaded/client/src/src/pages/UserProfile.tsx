@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar";
 import Flush from "../components/Flush";
 // import Button from "../components/Button";
 // import { deleteToken } from "../services/tokenUtilities";
-import Tweets from "../components/Tweets";
+import Tweets from "../components/FeedTweets";
 import { useNavigate } from "react-router-dom";
 
 export default function UserProfile() {

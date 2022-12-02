@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
-import Tweets from "../components/Tweets";
+import Tweets from "../components/FeedTweets";
 
 export default function Dashboard() {
 
