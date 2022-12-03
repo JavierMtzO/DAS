@@ -6,11 +6,17 @@ from datetime import datetime
 
 st.set_page_config(layout="wide")
 
+# Eager Singleton
+# Esta clase solo es accesible a través de init_connection, es la única de su tipo, y se crea en cuanto se carga la aplicación
 @st.experimental_singleton
 def init_connection():
     return MongoClient("mongodb+srv://Gustavo:kUbunriOkGpWyAkT@cluster0.r0fukzf.mongodb.net/?retryWrites=true&w=majority")
 
 mongo = init_connection()
+
+# Principio de Inversión de Dependencias
+# La función get_data() depende de una abstracción, que es la conexión a la base de datos.
+# Podríamos migrar MongoDB a SQL y el único pedazo de código que deberá cambiar es la conexión a la base de datos
 
 @st.experimental_memo(ttl=600)
 def get_data():
