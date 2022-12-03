@@ -109,7 +109,7 @@ def logout():
 
 # Principio de Abierto/Cerrado
 # Cada uno de los verbos HTTP para las rutas tiene una función propia.
-# De esta manera, no se debe si se quiere agregar otro verbo, por ejemplo, un 'PATCH' a la ruta /users,
+# De esta manera, si se quiere agregar otro verbo, por ejemplo, un 'PATCH' a la ruta /users,
 # se puede hacer agregando una función nueva, sin necesidad de modificar funciones existentes.
 @app.route('/users', methods=['GET'])
 def get_users():
