@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Flush from "../components/Flush";
-// import Button from "../components/Button";
-// import { deleteToken } from "../services/tokenUtilities";
+import Button from "../components/Button";
+import { deleteToken } from "../services/tokenUtilities";
 import Tweets from "../components/FeedTweets";
 import { useNavigate } from "react-router-dom";
 
@@ -25,8 +25,7 @@ export default function UserProfile() {
                 title="Mi información"
                 userData={user ?? user} />
               <div className="row my-5 px-3">
-
-                {/* <Button 
+                <Button 
                     onClick={() => {
                       deleteToken();
                       navigate('/');
@@ -34,7 +33,7 @@ export default function UserProfile() {
                     className="btn-outline-dark btn-sm rounded-pill fw-bold ms-lg-2"
                     padding={''}
                     btnType="button"
-                    btnText="Cerrar sesión"/> */}
+                    btnText="Cerrar sesión"/>
               </div>
           </Sidebar>
         </div>

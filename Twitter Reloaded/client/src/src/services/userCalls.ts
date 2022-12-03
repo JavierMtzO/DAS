@@ -1,14 +1,15 @@
 import axios from "axios";
 import generateError from "./generateError";
 import { getToken } from "./tokenUtilities";
-const BASE_URL = process.env.REACT_APP_SERVER_URL + '/user';
+// const BASE_URL = process.env.REACT_APP_SERVER_URL + '/user';
+const BASE_URL = "http://127.0.0.1:3001";
 
-export async function login (username: string, password: string) {
+export async function login (email: string, password: string) {
     try {
-        const { data } : { data : LoginResponse } = await axios.post(BASE_URL + '/login', {username, password});
-        sessionStorage.setItem('token', data.token);
-        sessionStorage.setItem('userId', data.user._id);
-        sessionStorage.setItem('userName', data.user.name);
+        const { data } : { data : any } = await axios.post(BASE_URL + '/login', {email, password});
+        // sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('userId', data.user_id);
+        sessionStorage.setItem('userName', data.username);
         return Promise.resolve(data.success);
     } catch (error : any) {
         return Promise.reject(generateError(error));

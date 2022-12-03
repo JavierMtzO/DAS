@@ -3,7 +3,7 @@ import Tweet from "./Tweet/Tweet";
 
 type Props = {
     title: string,
-    tweets: any,
+    tweets: any
   }
 
 export default function Tweets({title, tweets}: Props)  {
@@ -15,7 +15,7 @@ export default function Tweets({title, tweets}: Props)  {
             { tweets ? 
                 <div>
                 {
-                    tweets.map(function(tweet){
+                    tweets.map(function(tweet : any){
                         return <Tweet 
                         username={tweet['username']} 
                         message={tweet['content']} 

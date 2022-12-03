@@ -4,8 +4,10 @@ from bson import json_util
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 app.secret_key = 'key'
 mongo = MongoClient("mongodb+srv://Gustavo:kUbunriOkGpWyAkT@cluster0.r0fukzf.mongodb.net/?retryWrites=true&w=majority")
