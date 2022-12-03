@@ -15,6 +15,17 @@ export async function login (email: string, password: string) {
         return Promise.reject(generateError(error));
     }
 }
+// userId: string, username: string, 
+export async function postTweet(content: string){
+    try{
+        let userId = sessionStorage.getItem('userId');
+        let username = sessionStorage.getItem('userName');
+        const { data } : { data : any } = await axios.post(BASE_URL + '/tweets', {userId, username, content});
+        return Promise.resolve(data.success);
+    } catch (error : any) {
+        return Promise.reject(generateError(error));
+    }
+}
 
 export async function signup (
     username : string, 
@@ -33,6 +44,7 @@ export async function signup (
             const { data } : { data : any } = await axios.post(BASE_URL + '/users', signupData);
             // sessionStorage.setItem('token', data.token);
             sessionStorage.setItem('userId', data.user_id);
+            sessionStorage.setItem('userName', data.username);
             return Promise.resolve(data.success);
         } catch (error : any) {
             return Promise.reject(generateError(error));

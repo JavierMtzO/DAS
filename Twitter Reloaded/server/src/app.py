@@ -123,15 +123,15 @@ def get_new_tweets():
 
 @app.route('/tweets', methods=['POST'])
 def create_tweet():
-    user_id = session['user_id']
-    username = session['username']
+    user_id = request.json['userId']
+    username = request.json['username']
     content = request.json['content']
     if 'parent' in request.json:
         parent = request.json['parent']
     else:
         parent = None
-    if check_user(user_id) == False:
-        return unauthorized()
+    # if check_user(user_id) == False:
+        # return unauthorized()
     if user_id and username and content and len(content) <= 300:   
         if parent:
             id = db.tweets.insert_one({
@@ -162,7 +162,7 @@ def create_tweet():
             })
             db.events.insert_one(
                 {"type":"create_tweet",
-                "user": session['username'],
+                "user": request.json['username'],
                 "timestamp": datetime.now()})
         add_tweet_to_user(user_id, id, content)
         response.status_code = 201
