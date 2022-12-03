@@ -18,14 +18,14 @@ ReactDOM.render(
   <BrowserRouter>
     <Navbar />
     <Routes>
-      <Route path='/' element={<Dashboard />} />
-      {/* <Route element={<ProtectedRoute/>}> */}
+      <Route element={<ProtectedRoute/>}>
+        <Route path='/' element={<Dashboard />} />
         <Route path='/user_profile' element={<UserProfile />} />
-      {/* </Route> */}
-      {/* <Route element={<GuestRoute />}> */}
+      </Route>
+      <Route element={<GuestRoute />}>
         <Route path='/login' element={<HomeLogin />} />
         <Route path='/register' element={<HomeRegister />} />
-      {/* </Route> */}
+      </Route>
     </Routes>
   </BrowserRouter>,
   document.getElementById('root')

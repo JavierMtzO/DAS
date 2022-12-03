@@ -14,7 +14,6 @@ export default function HomeRegister() {
   const [nameFeedback, setNameFeedback] = useState("")
   const [usernameFeedback, setUsernameFeedback] = useState("")
   const [emailFeedback, setEmailFeedback] = useState("")
-  const [phoneFeedback, setPhoneFeedback] = useState("")
   const [passwordFeedback, setPasswordFeedback] = useState("")
   const [confirmPasswordFeedback, setConfirmPasswordFeedback] = useState("")
   const [password1TextShow, setPassword1TextShow] = useState<boolean>(true)
@@ -27,8 +26,8 @@ export default function HomeRegister() {
       usuario: { value: string },
       email: { value: string },
       password: { value: string },
-      passwordCheck: { value: string },
-      phoneNumber: { value: string }
+      passwordCheck: { value: string }
+      // phoneNumber: { value: string }
     };
 
     let errorFound = false;
@@ -58,21 +57,13 @@ export default function HomeRegister() {
       setEmailFeedback("")
     }
 
-    const phonePattern : RegExp = /^[0-9]{10}$/;
-    if (!target.phoneNumber.value || !phonePattern.test(target.phoneNumber.value)) {
-      setPhoneFeedback("Deben ser 10 dígitos solamente.")
-      errorFound = true
-    } else {
-      setPhoneFeedback("")
-    }
-
-    const passwordPattern : RegExp = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    if (!target.password.value || !passwordPattern.test(target.password.value)) {
-      setPasswordFeedback("Esta contraseña no es válida.")
-      errorFound = true
-    } else {
-      setPasswordFeedback("")
-    }
+    // const passwordPattern : RegExp = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    // if (!target.password.value || !passwordPattern.test(target.password.value)) {
+    //   setPasswordFeedback("Esta contraseña no es válida.")
+    //   errorFound = true
+    // } else {
+    //   setPasswordFeedback("")
+    // }
 
     if (!target.passwordCheck.value) {
       setConfirmPasswordFeedback("Escribe la contraseña de nuevo.")
@@ -89,7 +80,7 @@ export default function HomeRegister() {
     }
 
     try {
-      await signup(target.usuario.value, target.email.value, target.password.value, target.passwordCheck.value, target.nombre.value, target.phoneNumber.value)
+      await signup(target.usuario.value, target.email.value, target.password.value, target.passwordCheck.value, target.nombre.value)
       
       const loc = location as typeof location & {
         state: {from: string}
@@ -144,10 +135,6 @@ export default function HomeRegister() {
         <Input type="email" divClass="form-floating col-lg-7 mb-4" inputClass="form-control rounded-pill"
             inputId="email" placeholder="Correo electrónico" labelClass="form-label ps-4"
             feedbackClass="px-3 pt-2 text-light" feedbackText={emailFeedback}
-        />
-        <Input type="tel" divClass="form-floating col-lg-7 mb-4" inputClass="form-control rounded-pill"
-            inputId="phoneNumber" placeholder="Número de teléfono a 10 dígitos" labelClass="form-label ps-4" maxLength={10}
-            feedbackClass="px-3 pt-2 text-light" feedbackText={phoneFeedback}
         />
         <Input type="password" divClass="form-floating col-lg-7 mb-4" inputClass="form-control rounded-pill"
             inputId="password" placeholder="Contraseña" labelClass="form-label ps-4" maxLength={40}

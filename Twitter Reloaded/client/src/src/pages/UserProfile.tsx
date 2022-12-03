@@ -28,7 +28,7 @@ export default function UserProfile() {
                 <Button 
                     onClick={() => {
                       deleteToken();
-                      navigate('/');
+                      navigate('/login');
                     }}
                     className="btn-outline-dark btn-sm rounded-pill fw-bold ms-lg-2"
                     padding={''}
