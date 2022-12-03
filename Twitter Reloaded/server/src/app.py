@@ -4,8 +4,10 @@ from bson import json_util
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Principio de Segregación de la Interfaz
 # El dashboard de eventos es una interfaz totalmente independiente de la aplicación Twitter Reloaded
@@ -200,15 +202,15 @@ def get_new_tweets():
 
 @app.route('/tweets', methods=['POST'])
 def create_tweet():
-    user_id = session['user_id']
-    username = session['username']
+    user_id = request.json['userId']
+    username = request.json['username']
     content = request.json['content']
     if 'parent' in request.json:
         parent = request.json['parent']
     else:
         parent = None
-    if check_user(user_id) == False:
-        return unauthorized()
+    # if check_user(user_id) == False:
+        # return unauthorized()
     if user_id and username and content and len(content) <= 300:   
         if parent:
             new_tweet = ResponseTweet(user_id, username, content)
@@ -232,8 +234,10 @@ def create_tweet():
                 'content': content,
                 'timestamp': datetime.now()
             })
-            new_event = Event("create_tweet")
-            new_event.register()
+            db.events.insert_one(
+                {"type":"create_tweet",
+                "user": request.json['username'],
+                "timestamp": datetime.now()})
         add_tweet_to_user(user_id, id, content)
         response.status_code = 201
         return response

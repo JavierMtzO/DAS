@@ -11,17 +11,21 @@ import HomeLogin from './pages/HomeLogin';
 import HomeRegister from './pages/HomeRegister';
 import UserProfile from './pages/UserProfile';
 import Dashboard from './pages/Dashboard'
+import GuestRoute from './utils/GuestRoute';
+import ProtectedRoute from './utils/ProtectedRoute';
 
 ReactDOM.render(
   <BrowserRouter>
     <Navbar />
     <Routes>
-      <Route path='/' element={<Dashboard />} />
-      <Route path='/user_profile' element={<UserProfile />} />
-      {/* <Route element={<GuestRoute />}> */}
+      <Route element={<ProtectedRoute/>}>
+        <Route path='/' element={<Dashboard />} />
+        <Route path='/user_profile' element={<UserProfile />} />
+      </Route>
+      <Route element={<GuestRoute />}>
         <Route path='/login' element={<HomeLogin />} />
         <Route path='/register' element={<HomeRegister />} />
-      {/* </Route> */}
+      </Route>
     </Routes>
   </BrowserRouter>,
   document.getElementById('root')

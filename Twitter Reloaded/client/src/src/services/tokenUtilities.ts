@@ -1,9 +1,9 @@
 export function getToken() {
-    if (typeof (localStorage.token) !== "undefined") {
-        return localStorage.token;
+    if (typeof (localStorage.userId) !== "undefined") {
+        return localStorage.userId;
     }
-    else if (typeof (sessionStorage.token) !== "undefined") {
-        return sessionStorage.token;
+    else if (typeof (sessionStorage.userId) !== "undefined") {
+        return sessionStorage.userId;
     }
     return false;
 }

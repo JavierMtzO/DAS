@@ -54,8 +54,8 @@ export default function HomeLogin() {
       
       navigate("/")
     } catch (error) {
-      // const err = error as typeof error & ErrorResponse;
-      // setPasswordFeedback(err.msg)
+      const err = error as typeof error & ErrorResponse;
+      setPasswordFeedback(err.msg)
     }
   }
 
