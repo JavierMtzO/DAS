@@ -6,11 +6,17 @@ from datetime import datetime
 
 st.set_page_config(layout="wide")
 
+# Eager Singleton
+# Esta clase solo es accesible a través de init_connection, es la única de su tipo, y se crea en cuanto se carga la aplicación
 @st.experimental_singleton
 def init_connection():
     return MongoClient("mongodb+srv://Gustavo:kUbunriOkGpWyAkT@cluster0.r0fukzf.mongodb.net/?retryWrites=true&w=majority")
 
 mongo = init_connection()
+
+# Principio de Inversión de Dependencias
+# La función get_data() depende de una abstracción, que es la conexión a la base de datos.
+# Podríamos migrar MongoDB a SQL y el único pedazo de código que deberá cambiar es la conexión a la base de datos
 
 @st.experimental_memo(ttl=600)
 def get_data():
@@ -57,9 +63,10 @@ with col1:
     st.write(events_df.head(10))
     most_active = events_df.groupby("user")[["timestamp"]].count().head(5)
     st.subheader("Users who Registered the Most Events:")
+    most_active = most_active.rename(columns={'timestamp':'events'})
     st.write(most_active)
     fig, ax = plt.subplots()
-    ax.bar(most_active.index, most_active['timestamp'])
+    ax.bar(most_active.index, most_active['events'])
     plt.title("Most Active Users")
     plt.ylabel("Number of Events")
     st.pyplot(fig)
