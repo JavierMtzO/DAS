@@ -6,19 +6,21 @@
 
 ### Principios de solid:
 
-Single Responsibility Principle (SRP): Este principio de solid lo implementamos en la clase usario, ya que teniamos dentro de esta calse una mini funcion para encriptar la contraseño, entonces sacamos esa funcion y la pusimos en una clase aparte 
+Single Responsibility Principle (SRP):
+Un ejemplo de este principio es la creación de la clase Hash, la cual contiene funciones para encriptar y desencriptar contraseñas. Gracias a esto, las funciones de crear usuario y verificar login tienen una sola responsabilidad
 
-Open/Closed Principle (OP/CP): Este principio de cumple con las rutas que asignamos, ya que los metodos estan separdos, entonces si se le quiere agregar un nuevo metodo, no hay necesidad de modificar el codigo anterior 
+Open/Closed Principle (OP/CP): 
+Cada uno de los verbos HTTP para las rutas tiene un decorador y una función propia. De esta manera, si se quiere agregar otro verbo, por ejemplo, un 'PATCH' a la ruta /users, se puede hacer agregando una función nueva, sin necesidad de modificar funciones existentes.
 
-Liskov Substitution Principle (LSP): Aplicamos este principio sobre las clases de tweets, ya que estaba junto a el response tweet. En este caso dividimos las clases para cumplir con este principio
+Liskov Substitution Principle (LSP): Se tiene la clase 'ResponseTweet', que hereda de la clase 'Tweet'. La única diferencia entre esta clase y su clase padre es que se modifica el método 'insert'. Ambos cuentan con los mismos atributos, y si la clase heredada se sustituyera por la clase padre, aún funcionaría correctamente
 
-Interface Segregation Principle (ISP): Este principio se cumple justamente con unos de los requerimientos del proyecto, y es que lo que pasa en el dashboard de tweeter reloaded, se refleja en el event dashboard, sin presentar ninguna anomalia.
+Interface Segregation Principle (ISP): El dashboard de eventos es una interfaz totalmente independiente de la aplicación Twitter Reloaded. Aunque el dashboard se vea afectado por la apliación, los usuarios de esta no hacen uso de las funciones del dashboard, por lo tanto, no es necesario de estén conectadas.
 
-Dependency Inversion Principle (DIP): Se usa l single tone para hacer una conexion global, y esa conexion se pasa a una variable, entonces se puede modificar la base de datos sin que el sistema sufra cambios severos 
+Dependency Inversion Principle (DIP): Se tiene la función get_data, utilizada para obtener los datos de MongoDB. Esta depende de una abstracción, que es la conexión a la base de datos. Podríamos migrar MongoDB a SQL y el único pedazo de código que deberá cambiar es la conexión a la base de datos
 
 
 ### Patrones de diseño:
 
-Decoradores:
+Decoradores: Todas las rutas utilizan un decorador que agrega nueva funcionalidad a la variable app, el cual es un objeto de tipo Flask
 
-Single tone:
+Eager Singleton: La clase st.experimental_singleton solo es accesible a través de init_connection, es la única de su tipo, y se crea en cuanto se carga la aplicación.
