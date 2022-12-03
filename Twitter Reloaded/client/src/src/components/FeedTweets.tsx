@@ -10,7 +10,7 @@ export default function Tweets({title, tweets}: Props)  {
     return (
         <div className="container-fluid h-100 bg-light">
             <div className="d-flex justify-content-center p-4">
-                <h3 style={{fontWeight:"700",}}>{title}</h3>
+                <h5 style={{fontWeight:"700",}}>{title}</h5>
             </div>
             { tweets ? 
                 <div>
